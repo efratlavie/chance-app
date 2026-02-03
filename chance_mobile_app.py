@@ -270,49 +270,6 @@ with tab_draws:
     csv_all = day_df[view_cols].to_csv(index=False, encoding="utf-8-sig").encode("utf-8-sig")
     st.download_button("⬇️ הורדת כל ההגרלות של היום (CSV)", data=csv_all, file_name=f"chance_draws_{day2}.csv", mime="text/csv")
 
-# =========================
-# 💬 צ'אט חי – Chance VIP
-# =========================
 
-from supabase import create_client
-import os
-
-st.markdown("---")
-st.header("💬 צ'אט חי – חוכמת ההמונים")
-
-# חיבור ל-Supabase דרך Secrets
-SUPABASE_URL = st.secrets["SUPABASE_URL"]
-SUPABASE_ANON_KEY = st.secrets["SUPABASE_ANON_KEY"]
-
-supabase = create_client(SUPABASE_URL, SUPABASE_ANON_KEY)
-
-
-# טופס שליחת הודעה
-with st.form("chat_form", clear_on_submit=True):
-    username = st.text_input("שם / כינוי")
-    message = st.text_input("כתוב הודעה")
-    submitted = st.form_submit_button("שלח")
-
-    if submitted and message:
-        supabase.table("chat_messages").insert({
-            "username": username if username else "אורח",
-            "message": message,
-            "channel": "general"
-        }).execute()
-        st.success("ההודעה נשלחה!")
-
-# הצגת ההודעות
-st.markdown("### 🗨️ הודעות אחרונות")
-messages = (
-    supabase
-    .table("chat_messages")
-    .select("*")
-    .order("created_at", desc=True)
-    .limit(50)
-    .execute()
-)
-
-for row in reversed(messages.data):
-    st.markdown(f"**{row['username']}**: {row['message']}")
 
 

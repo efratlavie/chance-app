@@ -315,3 +315,4 @@ messages = (
 for row in reversed(messages.data):
     st.markdown(f"**{row['username']}**: {row['message']}")
 
+
